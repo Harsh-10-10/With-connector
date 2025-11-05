@@ -1,0 +1,34 @@
+%sql
+CREATE TABLE IF NOT EXISTS workspace.default.customer_orders (
+  OrderID STRING PRIMARY KEY NOT NULL,
+  CustomerID STRING NOT NULL,
+  OrderDate DATE NOT NULL,
+  Quantity INT NOT NULL CHECK(Quantity > 0),
+  Price DOUBLE NOT NULL,
+  DiscountCode STRING
+);
+
+
+
+
+%sql
+INSERT INTO workspace.default.customer_orders
+  (OrderID, CustomerID, OrderDate, Quantity, Price, DiscountCode)
+VALUES
+  ('ORD1001', 'CUST001', '2025-10-20', 5, 19.99, 'SAVE10'),
+  ('ORD1002', 'CUST002', '2025-10-21', 2, 45.50, NULL),
+  ('ORD1003', 'CUST001', '2025-10-22', 1, 150.00, 'NEW25');
+
+
+
+
+%sql
+INSERT INTO workspace.default.customer_orders
+SELECT
+  concat('ORD', 1004 + n.i) as OrderID,
+  concat('CUST', 101 + (n.i % 20)) as CustomerID,
+  date_add('2025-10-23', n.i) as OrderDate,
+  1 + (n.i % 5) as Quantity,
+  round((rand() * 200) + 10, 2) as Price,
+  CASE WHEN n.i % 10 = 0 THEN 'BULK' ELSE NULL END as DiscountCode
+FROM (SELECT explode(sequence(0, 96)) as i) as n;
