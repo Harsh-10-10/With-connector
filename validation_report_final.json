@@ -1,0 +1,176 @@
+{
+  "User_file_name": "new_orders.csv",
+  "sheet_validation_results": {
+    "csv_data": {
+      "file_name": "new_orders.csv",
+      "sheet_name": null,
+      "schema_mismatch": {
+        "target_table": "customer_orders",
+        "source_file": "new_orders.csv",
+        "columns_missing_from_file": [
+          "DiscountCode",
+          "Quantity",
+          "CustomerID"
+        ],
+        "columns_extra_in_file": [
+          "ShippingMethod",
+          "qty",
+          "cust",
+          "CustomerEmail"
+        ],
+        "naming_mismatches": {
+          "cust": "CustomerID",
+          "qty": "Quantity"
+        },
+        "analysis": {
+          "context": "File is missing 'DiscountCode', 'Quantity', and 'CustomerID' (mapped from 'cust'), while it has extra columns 'ShippingMethod', 'qty', 'cust', and 'CustomerEmail'. Two columns ('cust' and 'qty') are semantically mapped to the target schema.",
+          "reasoning": "Missing 'DiscountCode' may lead to incomplete discount data. The extra 'ShippingMethod' is not part of the target schema, potentially causing confusion or data inconsistency. The 'cust' and 'qty' columns are semantically equivalent to 'CustomerID' and 'Quantity' but are named differently, which could cause validation errors or misinterpretation during data loading.",
+          "recommendation": [
+            "Map 'cust' to 'CustomerID' and 'qty' to 'Quantity' to align with target schema.",
+            "Add 'DiscountCode' to the source file or assign a default value if missing.",
+            "Review 'ShippingMethod' to determine if it should be incorporated into the database schema or excluded.",
+            "Validate data types, especially ensure 'qty' values are numeric and convert 'OrderDate' to DATE format.",
+            "Update data ingestion scripts to handle renamed columns and missing fields appropriately."
+          ]
+        }
+      },
+      "total_rows_checked": 5,
+      "validated_at": "2025-11-05T12:34:05.829395+00:00",
+      "data_type_mismatch": [
+        {
+          "column": "Quantity",
+          "expected_db_type": "INTEGER",
+          "found_file_type": "object",
+          "sample_invalid_values": [
+            "one"
+          ]
+        }
+      ],
+      "data_quality_issues": [
+        {
+          "column": "OrderID",
+          "check": "not_null_violation",
+          "count": 1,
+          "affected_rows_sample_indices": [
+            3
+          ],
+          "severity": "high",
+          "details": "Column is non-nullable but contains 1 nulls (or empty strings treated as nulls for non-string columns)."
+        }
+      ],
+      "dynamic_validation_rules": [
+        {
+          "column": "OrderID",
+          "rule_type": "format_check",
+          "inferred_from_samples": [
+            "ORD1004",
+            "ORD1005"
+          ],
+          "rule_details": "Samples follow the pattern 'ORD' followed by 4 digits. A regex like ^ORD\\d{4}$ would validate this format."
+        },
+        {
+          "column": "cust",
+          "rule_type": "enum_check",
+          "inferred_from_samples": [
+            "CUST003",
+            "CUST004"
+          ],
+          "rule_details": "Samples suggest customer IDs follow the pattern 'CUST' followed by 3 digits. An enum list could be generated from existing values or a regex ^CUST\\d{3}$ for format validation."
+        },
+        {
+          "column": "OrderDate",
+          "rule_type": "format_check",
+          "inferred_from_samples": [
+            "2025-10-24",
+            "2025-10-25"
+          ],
+          "rule_details": "Samples are in ISO date format YYYY-MM-DD. A regex ^\\d{4}-\\d{2}-\\d{2}$ can validate the date format."
+        },
+        {
+          "column": "qty",
+          "rule_type": "format_check",
+          "inferred_from_samples": [
+            "10",
+            "5"
+          ],
+          "rule_details": "Samples are numeric strings representing quantities. A regex ^\\d+$ can validate numeric format. The presence of 'one' indicates potential non-numeric entries that need to be flagged."
+        },
+        {
+          "column": "Price",
+          "rule_type": "range_check",
+          "inferred_from_samples": [
+            25.0,
+            12.5
+          ],
+          "rule_details": "Samples are positive float values. A range check could enforce Price > 0, and possibly set an upper limit based on business context."
+        },
+        {
+          "column": "ShippingMethod",
+          "rule_type": "enum_check",
+          "inferred_from_samples": [
+            "Standard",
+            "Express"
+          ],
+          "rule_details": "Samples suggest a categorical variable with values 'Standard', 'Express', 'Priority'. An enum list can be created from these options."
+        },
+        {
+          "column": "CustomerEmail",
+          "rule_type": "format_check",
+          "inferred_from_samples": [
+            "user@example.com",
+            "bad-email"
+          ],
+          "rule_details": "Samples indicate email format validation. A regex like ^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,}$ can be used to validate email addresses."
+        }
+      ],
+      "validation_summary": {
+        "status": "Failed",
+        "high_severity_issues": 2,
+        "medium_severity_issues": 2,
+        "low_severity_issues": 3
+      },
+      "data_quality_score": {
+        "score": 45,
+        "grade": "D",
+        "reasoning": "The presence of a high-severity null OrderID violation (1 occurrence) critically undermines data integrity, risking failed order processing and customer dissatisfaction. Additionally, the 'Quantity' column's type mismatch (object instead of integer) can lead to calculation errors, further compromising business operations. Multiple schema mismatches and inconsistent data types reduce overall trustworthiness, resulting in a low score."
+      },
+      "triage_plan": [
+        {
+          "priority": 1,
+          "action": "Immediately address the null OrderID violation by correcting data entry or implementing validation rules.",
+          "reasoning": "Null OrderIDs block order tracking and processing, directly impacting order fulfillment and customer service."
+        },
+        {
+          "priority": 2,
+          "action": "Standardize 'Quantity' to numeric data type and validate all entries.",
+          "reasoning": "Type mismatch in 'Quantity' can cause calculation errors in inventory and sales reporting, affecting financial accuracy."
+        },
+        {
+          "priority": 3,
+          "action": "Map and reconcile column naming inconsistencies ('cust' to 'CustomerID', 'qty' to 'Quantity') and review missing 'DiscountCode'.",
+          "reasoning": "Inconsistent naming and missing fields can cause validation failures and incomplete data ingestion, leading to unreliable analytics."
+        },
+        {
+          "priority": 4,
+          "action": "Review and decide on the relevance of extra columns like 'ShippingMethod' and 'CustomerEmail', and update ingestion scripts accordingly.",
+          "reasoning": "Unnecessary or inconsistent columns may introduce confusion or data quality issues if not properly handled."
+        }
+      ],
+      "append_upsert_suggestion": {
+        "strategy": "Upsert",
+        "key_column": "OrderID",
+        "reasoning": "Using 'OrderID' as the key allows for updating existing records and preventing duplicates, which is essential for maintaining accurate order data. Given the null OrderID issue, this process must be preceded by data validation."
+      },
+      "schema_drift": {
+        "detected": true,
+        "analysis": "The schema has drifted with the addition of columns like 'ShippingMethod' and 'CustomerEmail' in recent schemas, and the use of different data types for 'OrderDate' (string vs. datetime). The naming inconsistencies ('cust' vs. 'CustomerID') also indicate schema evolution without proper version control."
+      },
+      "root_cause_analysis": {
+        "hypothesis": "The pattern of null 'OrderID' entries combined with inconsistent column naming and data types suggests manual data entry errors from spreadsheet uploads or inconsistent data source integrations, rather than automated API or system errors."
+      },
+      "overall_analysis": {
+        "narrative_summary": "The current data quality is insufficient for reliable production use, primarily due to critical missing and inconsistent data issues. The biggest business risk is order processing failures caused by null identifiers, which could lead to lost sales and customer dissatisfaction."
+      }
+    }
+  }
+}

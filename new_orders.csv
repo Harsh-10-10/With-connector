@@ -1,0 +1,6 @@
+OrderID,cust,OrderDate,qty,Price,ShippingMethod,CustomerEmail
+ORD1004,CUST003,2025-10-24,10,25.00,Standard,user@example.com
+ORD1005,CUST004,2025-10-25,one,12.50,Express,bad-email
+ORD1001,CUST001,2025-10-26,5,20.00,Standard,test@test.com
+,CUST005,2025-10-27,3,50.00,Priority,
+ORD1006,CUST006,2099-12-31,2,75.00,Standard,future@date.com

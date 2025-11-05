@@ -1,0 +1,199 @@
+{
+  "User_file_name": "new_orders.csv",
+  "Processed_at": "2025-11-05T10:09:48.786774+00:00",
+  "user_provided_target_table": "bank_churn",
+  "inferred_target_table": null,
+  "schema_mismatch": {
+    "target_table": "bank_churn",
+    "source_file": "new_orders.csv",
+    "columns_missing_from_file": [
+      "HasCrCard",
+      "Tenure",
+      "Age",
+      "Geography",
+      "EstimatedSalary",
+      "Surname",
+      "Balance",
+      "CustomerId",
+      "Exited",
+      "IsActiveMember",
+      "CreditScore",
+      "NumOfProducts",
+      "Gender"
+    ],
+    "columns_extra_in_file": [
+      "Price",
+      "OrderDate",
+      "OrderID",
+      "ShippingMethod",
+      "qty",
+      "cust",
+      "CustomerEmail"
+    ],
+    "naming_mismatches": {
+      "cust": "CustomerId",
+      "qty": "NumOfProducts"
+    },
+    "analysis": {
+      "context": "The file is missing multiple columns present in the target schema, but includes extra columns that are semantically related or similar. Two key columns ('cust' and 'qty') are mapped to 'CustomerId' and 'NumOfProducts' respectively.",
+      "reasoning": "Missing critical demographic and account information such as 'Age', 'Gender', and 'Balance' could impair customer segmentation and risk analysis. Extra columns like 'OrderID', 'OrderDate', and 'CustomerEmail' are not relevant to the target table, potentially causing data load errors or misinterpretation. The semantic mapping of 'cust' to 'CustomerId' and 'qty' to 'NumOfProducts' indicates a mismatch in naming conventions but aligns with the data's intent.",
+      "recommendation": [
+        "Map 'cust' to 'CustomerId' to ensure customer identifiers are correctly linked.",
+        "Map 'qty' to 'NumOfProducts' to accurately reflect product quantities.",
+        "Add missing demographic columns ('Age', 'Gender', 'Balance', etc.) to the source data or set default values to maintain schema integrity.",
+        "Remove or archive irrelevant extra columns ('OrderID', 'OrderDate', 'CustomerEmail', 'ShippingMethod') unless they are needed for other processes.",
+        "Review data collection processes to ensure all required fields are captured consistently and with proper naming conventions."
+      ]
+    }
+  },
+  "file_name": "new_orders.csv",
+  "sheet_name": null,
+  "total_rows_checked": 5,
+  "validated_at": "2025-11-05T10:09:44.246023+00:00",
+  "data_type_mismatch": [],
+  "data_quality_issues": [],
+  "dynamic_validation_rules": [
+    {
+      "column": "OrderID",
+      "rule_type": "format_check",
+      "inferred_from_samples": [
+        "ORD1004",
+        "ORD1005"
+      ],
+      "rule_details": "OrderID values start with 'ORD' followed by digits, suggesting a format rule like ^ORD\\d+$"
+    },
+    {
+      "column": "OrderID",
+      "rule_type": "null_check",
+      "inferred_from_samples": [
+        "ORD1004",
+        "ORD1005"
+      ],
+      "rule_details": "OrderID should not be null; null count indicates missing IDs that may cause record identification issues"
+    },
+    {
+      "column": "cust",
+      "rule_type": "format_check",
+      "inferred_from_samples": [
+        "CUST003",
+        "CUST004"
+      ],
+      "rule_details": "Customer IDs follow the pattern 'CUST' followed by digits, suggesting a format rule like ^CUST\\d+$"
+    },
+    {
+      "column": "OrderDate",
+      "rule_type": "format_check",
+      "inferred_from_samples": [
+        "2025-10-24",
+        "2025-10-25"
+      ],
+      "rule_details": "OrderDate values follow the ISO date format YYYY-MM-DD, suggesting a regex like ^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    {
+      "column": "OrderDate",
+      "rule_type": "range_check",
+      "inferred_from_samples": [
+        "2025-10-24",
+        "2099-12-31"
+      ],
+      "rule_details": "OrderDate should be within a realistic date range, e.g., from 2025-01-01 to 2099-12-31, to prevent future or invalid dates"
+    },
+    {
+      "column": "qty",
+      "rule_type": "format_check",
+      "inferred_from_samples": [
+        "10",
+        "one",
+        "5",
+        "3",
+        "2"
+      ],
+      "rule_details": "Quantity should be numeric; 'one' indicates non-numeric entries, suggesting a need for numeric validation"
+    },
+    {
+      "column": "qty",
+      "rule_type": "range_check",
+      "inferred_from_samples": [
+        "10",
+        "5",
+        "3",
+        "2"
+      ],
+      "rule_details": "Quantity should be a positive integer, likely within a reasonable range (e.g., 1 to 1000)"
+    },
+    {
+      "column": "Price",
+      "rule_type": "range_check",
+      "inferred_from_samples": [
+        25.0,
+        12.5,
+        20.0,
+        50.0,
+        75.0
+      ],
+      "rule_details": "Price values are positive floats, suggesting a minimum of 0 and possibly a maximum cap based on business context"
+    },
+    {
+      "column": "ShippingMethod",
+      "rule_type": "enum_check",
+      "inferred_from_samples": [
+        "Standard",
+        "Express",
+        "Priority"
+      ],
+      "rule_details": "ShippingMethod values are from a fixed set: ['Standard', 'Express', 'Priority']"
+    },
+    {
+      "column": "CustomerEmail",
+      "rule_type": "format_check",
+      "inferred_from_samples": [
+        "user@example.com",
+        "bad-email"
+      ],
+      "rule_details": "Email addresses should follow a standard email regex pattern, e.g., ^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    }
+  ],
+  "validation_summary": {
+    "status": "Failed",
+    "high_severity_issues": 2,
+    "medium_severity_issues": 0,
+    "low_severity_issues": 0
+  },
+  "data_quality_score": {
+    "score": 40,
+    "grade": "D",
+    "reasoning": "The dataset exhibits critical schema mismatches, including missing essential demographic columns and irrelevant extra columns, which compromise data integrity and downstream analytics. The absence of key customer attributes like 'Age' and 'Balance' impairs segmentation and risk assessment, while extraneous columns such as 'OrderID' and 'CustomerEmail' increase the risk of load errors. These issues significantly reduce confidence in data reliability for operational use."
+  },
+  "triage_plan": [
+    {
+      "priority": 1,
+      "action": "Identify and correct the source of missing critical demographic columns ('Age', 'Balance', etc.).",
+      "reasoning": "Without complete core data, customer segmentation and risk models are invalid, blocking reliable analysis."
+    },
+    {
+      "priority": 2,
+      "action": "Remove or archive irrelevant extra columns ('OrderID', 'OrderDate', 'CustomerEmail', etc.) from the source or data pipeline.",
+      "reasoning": "Irrelevant columns can cause load failures or misinterpretation, risking data corruption."
+    },
+    {
+      "priority": 3,
+      "action": "Implement validation checks to enforce schema consistency and naming conventions during data ingestion.",
+      "reasoning": "Prevents future mismatches and ensures data quality before loading into production systems."
+    }
+  ],
+  "append_upsert_suggestion": {
+    "strategy": "Do Not Load",
+    "key_column": null,
+    "reasoning": "The current dataset is incomplete and contains irrelevant columns, making it unsafe for direct load. Data must be cleaned and validated before integration."
+  },
+  "schema_drift": {
+    "detected": true,
+    "analysis": "The current file lacks multiple columns present in the target schema, indicating schema drift likely caused by changes in data collection processes or inconsistent data exports. No prior schema version is provided for comparison, but the missing core fields suggest a significant change in data source or extraction logic."
+  },
+  "root_cause_analysis": {
+    "hypothesis": "This pattern suggests a manual data export or incomplete data pipeline from a customer management system, where key demographic fields are omitted, and extraneous order-related columns are included. The mismatch in naming ('cust' vs. 'CustomerId') indicates inconsistent data extraction or manual editing, leading to schema misalignment."
+  },
+  "overall_analysis": {
+    "narrative_summary": "The current data is not fit for production use due to missing critical customer information and irrelevant extraneous data. The biggest business risk is making decisions based on incomplete or misaligned data, which could lead to inaccurate customer segmentation and risk assessments."
+  }
+}
