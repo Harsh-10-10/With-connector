@@ -32,3 +32,18 @@ SELECT
   round((rand() * 200) + 10, 2) as Price,
   CASE WHEN n.i % 10 = 0 THEN 'BULK' ELSE NULL END as DiscountCode
 FROM (SELECT explode(sequence(0, 96)) as i) as n;
+
+
+
+
+
+
+
+
+We have different file like tools,prompt ,validation_module,config,databricks_tool these are our main file and the test_flow_v2 can be our consider as our main file from where we can run this file and our code will run ,this was 1st 
+when we use autogen then we the test_flow file will be of no use as we are importing everything in the my_agent file 
+
+Hey I am working on a POC where I have to build an Schema Agent I have done most of the part the only thing which is remaining is that I have not structured the code part like functions part is missing in my case also we have a two case like we will be asking some input from the user that is fine but then our code is sent to the agent part  
+
+okay it is like my file has validation_module it is the main file, config file, prompt file, databricks_tool file , tools file, so when I ran the validation file my code is work from start to end 
+after that I have to move to the autogen part which the 2nd thing so in that case I have to disabled some part of the validation module which I will be calling in the autogen file 
